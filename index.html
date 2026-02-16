@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🎉 新年福利抽奖</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --red: #e74c3c;
+  --gold: #f1c40f;
+  --deep-red: #c0392b;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #fff;
+  overflow-x: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ====== Background ====== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url('assets/bg.jpg') center/cover no-repeat;
+  z-index: -2;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: -1;
+}
+
+/* ====== Lanterns ====== */
+.lantern {
+  position: fixed;
+  top: -10px;
+  width: 40px;
+  height: 55px;
+  background: radial-gradient(ellipse, #ff4444, #cc0000);
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(255,50,50,0.4);
+  z-index: 1;
+  animation: sway 3s ease-in-out infinite;
+}
+.lantern::before {
+  content: '';
+  position: absolute;
+  top: -8px; left: 50%; transform: translateX(-50%);
+  width: 16px; height: 10px;
+  background: var(--gold);
+  border-radius: 3px 3px 0 0;
+}
+.lantern::after {
+  content: '';
+  position: absolute;
+  bottom: -12px; left: 50%; transform: translateX(-50%);
+  width: 2px; height: 14px;
+  background: var(--gold);
+  box-shadow: -4px 6px 0 var(--gold), 4px 6px 0 var(--gold);
+}
+.lantern:nth-child(1) { left: 5%; animation-delay: 0s; }
+.lantern:nth-child(2) { right: 5%; left: auto; animation-delay: 1.5s; }
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+/* ====== Main Container ====== */
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ====== Header ====== */
+.header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--gold), #e67e22, var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 1px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+/* ====== Slot Machine ====== */
+.slot-machine {
+  background: rgba(20, 8, 8, 0.85);
+  border: 3px solid rgba(241,196,15,0.3);
+  border-radius: 24px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 0 60px rgba(231,76,60,0.15), inset 0 0 40px rgba(0,0,0,0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.slot-machine::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(241,196,15,0.2), transparent, rgba(241,196,15,0.1));
+  z-index: -1;
+}
+
+/* Prize display */
+.prize-window {
+  background: rgba(0,0,0,0.5);
+  border: 2px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 24px 16px;
+  margin-bottom: 24px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.prize-emoji {
+  font-size: 56px;
+  margin-bottom: 8px;
+  transition: transform 0.3s;
+}
+
+.prize-text {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+
+.prize-amount {
+  font-size: 16px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 4px;
+}
+
+.prize-window.rolling .prize-emoji {
+  animation: rollEmoji 0.12s linear infinite;
+}
+
+@keyframes rollEmoji {
+  0% { transform: translateY(-100%) scale(0.8); opacity: 0; }
+  50% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(100%) scale(0.8); opacity: 0; }
+}
+
+.prize-window.reveal .prize-emoji {
+  animation: revealPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes revealPop {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Draw button */
+.draw-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, var(--red), var(--deep-red));
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(231,76,60,0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.draw-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  pointer-events: none;
+}
+
+.draw-btn:active:not(:disabled) { transform: scale(0.96); }
+.draw-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.remaining {
+  margin-top: 16px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 1px;
+}
+
+.remaining strong {
+  color: var(--gold);
+  font-size: 18px;
+}
+
+/* ====== Prize Table ====== */
+.prize-table {
+  width: 100%;
+  max-width: 360px;
+  margin-top: 28px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.prize-table-title {
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255,255,255,0.4);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  letter-spacing: 2px;
+}
+
+.prize-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.3s;
+}
+
+.prize-row:last-child { border-bottom: none; }
+.prize-row.won { background: rgba(241,196,15,0.08); }
+
+.prize-row .rank {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  width: 60px;
+  flex-shrink: 0;
+}
+
+.prize-row .amount {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.prize-row .prob {
+  font-size: 12px;
+  color: rgba(255,255,255,0.25);
+}
+
+/* ====== History ====== */
+.history {
+  width: 100%;
+  max-width: 360px;
+  margin-top: 20px;
+}
+
+.history-title {
+  font-size: 14px;
+  color: rgba(255,255,255,0.3);
+  margin-bottom: 8px;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+  font-size: 14px;
+  animation: slideIn 0.3s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.history-item .h-num {
+  color: rgba(255,255,255,0.3);
+  font-size: 12px;
+  width: 30px;
+}
+
+.history-item .h-prize {
+  flex: 1;
+  font-weight: 600;
+}
+
+.history-item .h-amount {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+/* ====== Footer ====== */
+.footer {
+  margin-top: 28px;
+  text-align: center;
+  padding: 16px;
+  max-width: 360px;
+}
+
+.footer p {
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.6;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.footer .highlight {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* ====== Confetti ====== */
+.confetti-piece {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  z-index: 100;
+  pointer-events: none;
+  animation: confettiFall linear forwards;
+}
+
+@keyframes confettiFall {
+  0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+  100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+}
+
+/* Big win glow */
+.big-win-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.big-win-glow.active {
+  opacity: 1;
+  animation: glowPulse 1s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: inset 0 0 30px rgba(241,196,15,0.2), 0 0 40px rgba(241,196,15,0.1); }
+  50% { box-shadow: inset 0 0 50px rgba(241,196,15,0.35), 0 0 60px rgba(241,196,15,0.2); }
+}
+
+/* ====== Background particles ====== */
+.bg-particle {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+}
+
+@media (max-width: 400px) {
+  .title { font-size: 28px; }
+  .slot-machine { padding: 24px 16px; }
+  .prize-emoji { font-size: 48px; }
+}
+</style>
+</head>
+<body>
+
+<div class="lantern"></div>
+<div class="lantern"></div>
+
+<div class="container">
+  <div class="header">
+    <h1 class="title">🎉 新年福利 🎉</h1>
+    <p class="subtitle">每人可抽 5 次</p>
+  </div>
+
+  <div class="slot-machine">
+    <div class="prize-window" id="prizeWindow">
+      <div class="big-win-glow" id="bigWinGlow"></div>
+      <div class="prize-emoji" id="prizeEmoji">🧧</div>
+      <div class="prize-text" id="prizeText">试试手气</div>
+      <div class="prize-amount" id="prizeAmount"></div>
+    </div>
+
+    <button class="draw-btn" id="drawBtn">开始抽奖</button>
+
+    <div class="remaining" id="remaining">
+      剩余次数：<strong id="remainCount">5</strong> / 5
+    </div>
+  </div>
+
+  <div class="prize-table">
+    <div class="prize-table-title">奖品列表</div>
+    <div class="prize-row" data-tier="1">
+      <span class="rank">一等奖</span>
+      <span class="amount">100 🧧</span>
+      <span class="prob">5%</span>
+    </div>
+    <div class="prize-row" data-tier="2">
+      <span class="rank">二等奖</span>
+      <span class="amount">52 🧧</span>
+      <span class="prob">20%</span>
+    </div>
+    <div class="prize-row" data-tier="3">
+      <span class="rank">三等奖</span>
+      <span class="amount">20 🧧</span>
+      <span class="prob">30%</span>
+    </div>
+    <div class="prize-row" data-tier="4">
+      <span class="rank">四等奖</span>
+      <span class="amount">10 🧧</span>
+      <span class="prob">25%</span>
+    </div>
+    <div class="prize-row" data-tier="5">
+      <span class="rank">五等奖</span>
+      <span class="amount">2 🧧</span>
+      <span class="prob">20%</span>
+    </div>
+  </div>
+
+  <div class="history" id="historySection" style="display:none;">
+    <div class="history-title">抽奖记录</div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+
+  <div class="footer">
+    <p>抽到奖品后 <span class="highlight">截图</span> 来找我领奖 🎁</p>
+  </div>
+</div>
+
+<script>
+// ====== Prizes ======
+const prizes = [
+  { tier: 1, name: '一等奖', amount: 100, emoji: '🏆', prob: 0.05 },
+  { tier: 2, name: '二等奖', amount: 52,  emoji: '🎊', prob: 0.20 },
+  { tier: 3, name: '三等奖', amount: 20,  emoji: '🎁', prob: 0.30 },
+  { tier: 4, name: '四等奖', amount: 10,  emoji: '🧧', prob: 0.25 },
+  { tier: 5, name: '五等奖', amount: 2,   emoji: '🎋', prob: 0.20 },
+];
+
+const rollingEmojis = ['🧧', '🎁', '🏆', '🎊', '🎋', '💰', '🎉', '🎆', '✨', '🎇'];
+
+// ====== State ======
+const STORAGE_KEY = 'ny_lucky_2026';
+let state = loadState();
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const s = JSON.parse(saved);
+      if (s.remaining >= 0 && s.remaining <= 5) return s;
+    }
+  } catch(e) {}
+  return { remaining: 5, history: [] };
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+// ====== Audio ======
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playTick() {
+  try {
+    ensureAudio();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.type = 'sine';
+    osc.frequency.value = 800 + Math.random() * 400;
+    const t = audioCtx.currentTime;
+    gain.gain.setValueAtTime(0.06, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+    osc.start(t); osc.stop(t + 0.05);
+  } catch(e) {}
+}
+
+function playWin(tier) {
+  try {
+    ensureAudio();
+    const notes = tier <= 2
+      ? [523, 659, 784, 1047, 1318]
+      : [440, 554, 659];
+    notes.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.type = 'sine';
+      const t = audioCtx.currentTime + i * 0.12;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+      osc.start(t); osc.stop(t + 0.2);
+    });
+    if (navigator.vibrate) {
+      navigator.vibrate(tier <= 2 ? [50, 30, 50, 30, 100] : [30, 20, 30]);
+    }
+  } catch(e) {}
+}
+
+// ====== Drawing ======
+function drawPrize() {
+  const rand = Math.random();
+  let cumulative = 0;
+  for (const p of prizes) {
+    cumulative += p.prob;
+    if (rand < cumulative) return p;
+  }
+  return prizes[prizes.length - 1];
+}
+
+let isDrawing = false;
+
+function startDraw() {
+  if (isDrawing || state.remaining <= 0) return;
+  isDrawing = true;
+  ensureAudio();
+
+  const btn = document.getElementById('drawBtn');
+  btn.disabled = true;
+  btn.textContent = '抽奖中...';
+
+  const window_ = document.getElementById('prizeWindow');
+  const emojiEl = document.getElementById('prizeEmoji');
+  const textEl = document.getElementById('prizeText');
+  const amountEl = document.getElementById('prizeAmount');
+  const glow = document.getElementById('bigWinGlow');
+
+  glow.classList.remove('active');
+  window_.classList.remove('reveal');
+  window_.classList.add('rolling');
+  amountEl.textContent = '';
+
+  const result = drawPrize();
+
+  let rollCount = 0;
+  const rollInterval = setInterval(() => {
+    emojiEl.textContent = rollingEmojis[Math.floor(Math.random() * rollingEmojis.length)];
+    textEl.textContent = ['?', '??', '???'][rollCount % 3];
+    playTick();
+    rollCount++;
+  }, 100);
+
+  const duration = 1500 + Math.random() * 1000;
+  setTimeout(() => {
+    clearInterval(rollInterval);
+    window_.classList.remove('rolling');
+    window_.classList.add('reveal');
+
+    emojiEl.textContent = result.emoji;
+    textEl.textContent = result.name;
+    amountEl.textContent = `${result.amount} 元红包`;
+
+    playWin(result.tier);
+
+    if (result.tier <= 2) {
+      glow.classList.add('active');
+      spawnConfetti();
+    }
+
+    document.querySelectorAll('.prize-row').forEach(row => {
+      row.classList.toggle('won', parseInt(row.dataset.tier) === result.tier);
+    });
+
+    state.remaining--;
+    state.history.unshift({ tier: result.tier, name: result.name, amount: result.amount });
+    saveState();
+    updateUI();
+
+    btn.disabled = false;
+    btn.textContent = state.remaining > 0 ? '再抽一次' : '已用完';
+    if (state.remaining <= 0) btn.disabled = true;
+
+    isDrawing = false;
+    addHistoryEntry(state.history[0], 5 - state.remaining);
+  }, duration);
+}
+
+function addHistoryEntry(entry, num) {
+  const section = document.getElementById('historySection');
+  const list = document.getElementById('historyList');
+  section.style.display = 'block';
+
+  const item = document.createElement('div');
+  item.className = 'history-item';
+  item.innerHTML = `
+    <span class="h-num">#${num}</span>
+    <span class="h-prize">${entry.name}</span>
+    <span class="h-amount">${entry.amount} 🧧</span>
+  `;
+  list.prepend(item);
+}
+
+function updateUI() {
+  document.getElementById('remainCount').textContent = state.remaining;
+  if (state.remaining <= 0) {
+    const btn = document.getElementById('drawBtn');
+    btn.disabled = true;
+    btn.textContent = '抽奖次数已用完';
+  }
+}
+
+// ====== Confetti ======
+function spawnConfetti() {
+  const colors = ['#f1c40f', '#e74c3c', '#ff6b6b', '#ffd93d', '#ff9f43', '#ee5a24'];
+  for (let i = 0; i < 50; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.top = '-10px';
+    piece.style.width = (6 + Math.random() * 8) + 'px';
+    piece.style.height = (6 + Math.random() * 8) + 'px';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+    piece.style.animationDelay = (Math.random() * 0.5) + 's';
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 4500);
+  }
+}
+
+// ====== Background Particles ======
+function createParticles() {
+  for (let i = 0; i < 8; i++) {
+    const p = document.createElement('div');
+    p.className = 'bg-particle';
+    const size = 2 + Math.random() * 4;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.background = `rgba(241, 196, 15, ${0.1 + Math.random() * 0.2})`;
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    document.body.appendChild(p);
+  }
+}
+
+// ====== Init ======
+document.getElementById('drawBtn').addEventListener('click', startDraw);
+
+if (state.history.length > 0) {
+  state.history.slice().reverse().forEach((entry, i) => {
+    addHistoryEntry(entry, i + 1);
+  });
+}
+
+updateUI();
+createParticles();
+
+// Reset: long press footer 3s
+const footer = document.querySelector('.footer');
+let pressTimer;
+footer.addEventListener('touchstart', () => {
+  pressTimer = setTimeout(() => {
+    if (confirm('重置抽奖次数？')) {
+      state = { remaining: 5, history: [] };
+      saveState();
+      location.reload();
+    }
+  }, 3000);
+});
+footer.addEventListener('touchend', () => clearTimeout(pressTimer));
+</script>
+</body>
+</html>
