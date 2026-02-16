@@ -35,7 +35,7 @@ body::after {
   content: '';
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.8) 100%);
   z-index: -1;
 }
 
@@ -81,8 +81,8 @@ body::after {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 24px 16px;
+  justify-content: flex-end;
+  padding: 16px 16px 24px;
   position: relative;
   z-index: 2;
 }
@@ -90,59 +90,61 @@ body::after {
 /* ====== Header ====== */
 .header {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 16px;
 }
 
 .title {
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 800;
   background: linear-gradient(135deg, var(--gold), #e67e22, var(--gold));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   letter-spacing: 2px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
+  text-shadow: none;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
 }
 
 .subtitle {
-  font-size: 15px;
-  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
   letter-spacing: 1px;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
 }
 
 /* ====== Slot Machine ====== */
 .slot-machine {
-  background: rgba(20, 8, 8, 0.85);
-  border: 3px solid rgba(241,196,15,0.3);
-  border-radius: 24px;
-  padding: 32px 24px;
+  background: rgba(10, 4, 4, 0.75);
+  border: 2px solid rgba(241,196,15,0.25);
+  border-radius: 20px;
+  padding: 20px 18px;
   width: 100%;
-  max-width: 360px;
+  max-width: 340px;
   text-align: center;
   position: relative;
-  box-shadow: 0 0 60px rgba(231,76,60,0.15), inset 0 0 40px rgba(0,0,0,0.5);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 0 40px rgba(0,0,0,0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .slot-machine::before {
   content: '';
   position: absolute;
   inset: -1px;
-  border-radius: 24px;
-  background: linear-gradient(135deg, rgba(241,196,15,0.2), transparent, rgba(241,196,15,0.1));
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(241,196,15,0.15), transparent, rgba(241,196,15,0.08));
   z-index: -1;
 }
 
 /* Prize display */
 .prize-window {
-  background: rgba(0,0,0,0.5);
-  border: 2px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
-  padding: 24px 16px;
-  margin-bottom: 24px;
-  min-height: 120px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 18px 14px;
+  margin-bottom: 16px;
+  min-height: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -152,13 +154,13 @@ body::after {
 }
 
 .prize-emoji {
-  font-size: 56px;
-  margin-bottom: 8px;
+  font-size: 48px;
+  margin-bottom: 6px;
   transition: transform 0.3s;
 }
 
 .prize-text {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--gold);
   letter-spacing: 1px;
@@ -192,10 +194,10 @@ body::after {
 /* Draw button */
 .draw-btn {
   width: 100%;
-  padding: 16px;
+  padding: 14px;
   border: none;
-  border-radius: 16px;
-  font-size: 20px;
+  border-radius: 14px;
+  font-size: 18px;
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -223,34 +225,34 @@ body::after {
 }
 
 .remaining {
-  margin-top: 16px;
-  font-size: 14px;
+  margin-top: 10px;
+  font-size: 13px;
   color: rgba(255,255,255,0.4);
   letter-spacing: 1px;
 }
 
 .remaining strong {
   color: var(--gold);
-  font-size: 18px;
+  font-size: 16px;
 }
 
 /* ====== Prize Table ====== */
 .prize-table {
   width: 100%;
-  max-width: 360px;
-  margin-top: 28px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
+  max-width: 340px;
+  margin-top: 14px;
+  background: rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
   overflow: hidden;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 
 .prize-table-title {
-  padding: 12px;
+  padding: 8px;
   text-align: center;
-  font-size: 14px;
+  font-size: 12px;
   color: rgba(255,255,255,0.4);
   border-bottom: 1px solid rgba(255,255,255,0.06);
   letter-spacing: 2px;
@@ -259,7 +261,7 @@ body::after {
 .prize-row {
   display: flex;
   align-items: center;
-  padding: 10px 16px;
+  padding: 7px 14px;
   border-bottom: 1px solid rgba(255,255,255,0.04);
   transition: background 0.3s;
 }
@@ -268,7 +270,7 @@ body::after {
 .prize-row.won { background: rgba(241,196,15,0.08); }
 
 .prize-row .rank {
-  font-size: 13px;
+  font-size: 12px;
   color: rgba(255,255,255,0.5);
   width: 60px;
   flex-shrink: 0;
@@ -276,7 +278,7 @@ body::after {
 
 .prize-row .amount {
   flex: 1;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--gold);
 }
@@ -289,12 +291,12 @@ body::after {
 /* ====== History ====== */
 .history {
   width: 100%;
-  max-width: 360px;
-  margin-top: 20px;
+  max-width: 340px;
+  margin-top: 12px;
 }
 
 .history-title {
-  font-size: 14px;
+  font-size: 12px;
   color: rgba(255,255,255,0.3);
   margin-bottom: 8px;
   text-align: center;
@@ -310,11 +312,11 @@ body::after {
 .history-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 14px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 10px;
-  font-size: 14px;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(0,0,0,0.35);
+  border-radius: 8px;
+  font-size: 13px;
   animation: slideIn 0.3s ease;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -343,10 +345,10 @@ body::after {
 
 /* ====== Footer ====== */
 .footer {
-  margin-top: 28px;
+  margin-top: 14px;
   text-align: center;
-  padding: 16px;
-  max-width: 360px;
+  padding: 10px;
+  max-width: 340px;
 }
 
 .footer p {
@@ -413,9 +415,9 @@ body::after {
 }
 
 @media (max-width: 400px) {
-  .title { font-size: 28px; }
-  .slot-machine { padding: 24px 16px; }
-  .prize-emoji { font-size: 48px; }
+  .title { font-size: 26px; }
+  .slot-machine { padding: 16px 14px; }
+  .prize-emoji { font-size: 42px; }
 }
 </style>
 </head>
